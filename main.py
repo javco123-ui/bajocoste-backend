@@ -19,4 +19,4 @@ def responder(data: Pregunta):
             {"role": "user", "content": data.pregunta}
         ]
     )
-    return {"respuesta": completion.choices[0].message["content"]}
+    return {"respuesta": completion.choices[0].message.content}
