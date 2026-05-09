@@ -34,7 +34,7 @@ async def responder(request: Request):
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "Eres un asistente experto y claro."},
+            {"role": "system", "content": "Eres un asistente experto en finanzas personales."},
             {"role": "user", "content": prompt_final}
         ]
     )
