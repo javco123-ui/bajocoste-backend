@@ -4,25 +4,26 @@ from openai import OpenAI
 import os
 
 app = FastAPI()
-
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-class Pregunta(BaseModel):
-    pregunta: str | None = None
+class Datos(BaseModel):
+    prompt: str | None = None
 
 @app.post("/ia")
-def responder(data: Pregunta):
-    # Caso 1: Forminator está probando el webhook (envía {} o vacío)
-    if not data.pregunta:
+def responder(data: Datos):
+
+    # Caso 1: Forminator está probando el webhook
+    if not data.prompt:
         return {"status": "ok"}
 
-    # Caso 2: El usuario envió una pregunta real
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "Eres un asistente financiero."},
-            {"role": "user", "content": data.pregunta}
+            {"role": "system", "content": "Eres un asistente financiero experto en análisis y recomendaciones personalizadas."},
+            {"role": "user", "content": data.prompt}
         ]
     )
+
     return {"respuesta": completion.choices[0].message.content}
+
 
