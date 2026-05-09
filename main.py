@@ -1,29 +1,43 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, Request
 from openai import OpenAI
 import os
+from prompts.index import PROMPTS
 
 app = FastAPI()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-class Datos(BaseModel):
-    prompt: str | None = None
-
 @app.post("/ia")
-def responder(data: Datos):
+async def responder(request: Request):
+    data = await request.json()
 
     # Caso 1: Forminator está probando el webhook
-    if not data.prompt:
+    if not data:
         return {"status": "ok"}
 
+    # 1) Identificar el simulador
+    simulador = data.get("simulador")
+    if not simulador:
+        return {"error": "Falta el campo 'simulador'."}
+
+    # 2) Obtener el prompt base desde el diccionario centralizado
+    prompt_base = PROMPTS.get(simulador)
+    if not prompt_base:
+        return {"error": f"Simulador '{simulador}' no encontrado."}
+
+    # 3) Construir el prompt dinámico con los parámetros del usuario
+    try:
+        prompt_final = prompt_base.format(**data)
+    except Exception as e:
+        return {"error": f"Error formateando el prompt: {str(e)}"}
+
+    # 4) Llamar a OpenAI
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "Eres un asistente financiero experto en análisis y recomendaciones personalizadas."},
-            {"role": "user", "content": data.prompt}
+            {"role": "system", "content": "Eres un asistente experto y claro."},
+            {"role": "user", "content": prompt_final}
         ]
     )
 
     return {"respuesta": completion.choices[0].message.content}
-
 
