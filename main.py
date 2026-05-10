@@ -17,7 +17,7 @@ async def responder(request: Request):
         return {"status": "ok"}
 
     # 1) Identificar el simulador
-    simulador = data.get("simulador")
+    simulador = data.get("form_title")
     if not simulador:
         return {"error": "Falta el campo 'simulador'."}
 
