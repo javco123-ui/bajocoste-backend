@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
+from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 import os
 from prompts.index import PROMPTS
