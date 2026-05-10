@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from openai import OpenAI
 import os
 from prompts.index import PROMPTS
+from fastapi.responses import PlainTextResponse
 
 app = FastAPI()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -41,5 +42,5 @@ async def responder(request: Request):
         ]
     )
 
-    return {"respuesta": completion.choices[0].message.content}
+    return PlainTextResponse(completion.choices[0].message.content)
 
