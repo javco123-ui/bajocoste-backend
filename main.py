@@ -42,18 +42,18 @@ async def responder(request: Request):
 
     # 4) Llamar a OpenAI
     try:
-    completion = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=[
-        {"role": "system", "content": "Eres un asistente experto en finanzas personales."},
-        {"role": "user", "content": prompt_final}
-    ]
-)
+        completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "Eres un asistente experto en finanzas personales."},
+            {"role": "user", "content": prompt_final}
+        ]
+    )
+    respuesta = completion.choices[0].message.content
+    return PlainTextResponse(respuesta)
 
-respuesta = completion.choices[0].message.content
-return PlainTextResponse(respuesta)
+except Exception as e:
+    print("Error OpenAI:", e)
+    return PlainTextResponse("Error interno procesando la solicitud.", status_code=500)
 
 
-    except Exception as e:
-        print("Error OpenAI:", e)
-        return PlainTextResponse("Error interno procesando la solicitud.", status_code=500)
