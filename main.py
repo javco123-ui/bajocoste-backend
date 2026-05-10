@@ -9,6 +9,8 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 @app.post("/ia")
 async def responder(request: Request):
     data = await request.json()
+    print("Datos recibidos desde Forminator:", data)
+
 
     # Caso 1: Forminator está probando el webhook
     if not data:
