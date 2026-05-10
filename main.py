@@ -17,6 +17,7 @@ app.add_middleware(
 )
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+print("API KEY:", os.getenv("OPENAI_API_KEY"))
 
 @app.post("/ia")
 async def responder(request: Request):
