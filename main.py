@@ -34,26 +34,27 @@ async def responder(request: Request):
     if not prompt_base:
         return PlainTextResponse(f"Error: simulador '{simulador}' no encontrado.", status_code=400)
 
-    # 3) Construir el prompt dinámico con TODOS los parámetros recibidos
+    # 3) Construir el prompt dinámico
     try:
         prompt_final = prompt_base.format(**data)
+        print("Prompt final:", prompt_final)
     except Exception as e:
         return PlainTextResponse(f"Error formateando el prompt: {str(e)}", status_code=400)
 
     # 4) Llamar a OpenAI
     try:
         completion = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "Eres un asistente experto en finanzas personales."},
-            {"role": "user", "content": prompt_final}
-        ]
-    )
-    respuesta = completion.choices[0].message.content
-    return PlainTextResponse(respuesta)
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Eres un asistente experto en finanzas personales."},
+                {"role": "user", "content": prompt_final}
+            ]
+        )
 
-except Exception as e:
-    print("Error OpenAI:", e)
-    return PlainTextResponse("Error interno procesando la solicitud.", status_code=500)
+        # SDK nuevo → usar .content
+        respuesta = completion.choices[0].message.content
+        return PlainTextResponse(respuesta)
 
-
+    except Exception as e:
+        print("Error OpenAI:", e)
+        return PlainTextResponse("Error interno procesando la solicitud.", status_code=500)
